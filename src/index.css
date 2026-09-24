@@ -1,0 +1,192 @@
+@import 'tailwindcss';
+
+:root {
+  --ink: #14221e;
+  --paper: #e8f0e4;
+  --mint: #7dd3a7;
+  --flare: #f0c75e;
+  --tomato: #e85d4c;
+  --teal: #2a6b5a;
+  --night: #0d1a16;
+  --fluorescent: #c8f06a;
+  --carpet: #3d5248;
+  --font-display: 'Syne', system-ui, sans-serif;
+  --font-body: 'Bricolage Grotesque', system-ui, sans-serif;
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--paper);
+  background: var(--night);
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  touch-action: manipulation;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+@keyframes float-dust {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes flicker {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  40% {
+    opacity: 0.85;
+  }
+  60% {
+    opacity: 0.4;
+  }
+}
+
+@keyframes bounce-in {
+  0% {
+    transform: scale(0.6) translateY(20px);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.08) translateY(-4px);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes shake-hit {
+  0%,
+  100% {
+    transform: translateX(0) rotate(0deg);
+  }
+  20% {
+    transform: translateX(-10px) rotate(-3deg);
+  }
+  40% {
+    transform: translateX(10px) rotate(3deg);
+  }
+  60% {
+    transform: translateX(-6px) rotate(-2deg);
+  }
+  80% {
+    transform: translateX(6px) rotate(2deg);
+  }
+}
+
+@keyframes splash-pop {
+  0% {
+    transform: scale(0.2);
+    opacity: 0;
+  }
+  40% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(240, 199, 94, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(240, 199, 94, 0);
+  }
+}
+
+@keyframes scan-pulse {
+  0%,
+  100% {
+    outline-color: rgba(232, 93, 76, 0.2);
+  }
+  50% {
+    outline-color: rgba(232, 93, 76, 0.85);
+  }
+}
+
+@keyframes title-sway {
+  0%,
+  100% {
+    transform: rotate(-1.2deg);
+  }
+  50% {
+    transform: rotate(1.2deg);
+  }
+}
+
+.animate-float {
+  animation: float-dust 4.5s ease-in-out infinite;
+}
+
+.animate-flicker {
+  animation: flicker 3.2s ease-in-out infinite;
+}
+
+.animate-bounce-in {
+  animation: bounce-in 0.45s cubic-bezier(0.22, 1.4, 0.36, 1) both;
+}
+
+.animate-shake {
+  animation: shake-hit 0.45s ease-in-out;
+}
+
+.animate-splash {
+  animation: splash-pop 0.7s ease-out forwards;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-scan {
+  outline: 3px solid rgba(232, 93, 76, 0.5);
+  outline-offset: 6px;
+  animation: scan-pulse 0.8s ease-in-out infinite;
+}
+
+.animate-title-sway {
+  animation: title-sway 5s ease-in-out infinite;
+}
+
+.meter-fill {
+  transition: width 0.35s ease-out;
+}
+
+.prank-btn:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+.prank-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
