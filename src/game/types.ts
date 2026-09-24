@@ -1,12 +1,31 @@
 export type Screen = 'title' | 'customize' | 'playing' | 'won' | 'lost'
 
+export type VoicePackId =
+  | 'off'
+  | 'en-male'
+  | 'en-female'
+  | 'hi-male'
+  | 'hi-female'
+
 export type PrankId =
+  | 'slap'
+  | 'kick'
+  | 'haircut'
   | 'rubber-chicken'
   | 'coffee-spill'
-  | 'whoopee'
-  | 'stapler'
-  | 'fake-memo'
-  | 'desk-trap'
+  | 'pie-face'
+  | 'stapler-slam'
+  | 'void-memo'
+
+export type HitFx =
+  | 'slap'
+  | 'kick'
+  | 'cut'
+  | 'chicken'
+  | 'spill'
+  | 'pie'
+  | 'slam'
+  | 'void'
 
 export type HairStyle = 'slick' | 'tuft' | 'balding' | 'mullet'
 export type HairColor = 'charcoal' | 'salt' | 'ginger' | 'bleach'
@@ -34,6 +53,9 @@ export interface Prank {
   suspicion: number
   cooldownMs: number
   reaction: string
+  fx: HitFx
+  /** How much cartoon hair integrity this removes (0–1). */
+  hairDamage?: number
 }
 
 export interface FloatingText {
@@ -51,8 +73,10 @@ export interface GameState {
   secondsLeft: number
   scanning: boolean
   lastPrankId: PrankId | null
+  lastFx: HitFx | null
   hitNonce: number
-  splash: string | null
+  /** 1 = full coiffure, 0 = cartoon bald patch. */
+  hairIntegrity: number
   floating: FloatingText[]
   cooldowns: Partial<Record<PrankId, number>>
   message: string

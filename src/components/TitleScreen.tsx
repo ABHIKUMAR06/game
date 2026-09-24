@@ -31,7 +31,7 @@ export function TitleScreen({ onStart }: TitleScreenProps) {
 
       <main className="relative z-10 flex flex-1 flex-col items-center justify-center px-5 py-10 text-center">
         <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-[var(--fluorescent)]">
-          After-hours cubicle comedy
+          3D after-hours cubicle horror-comedy
         </p>
         <h1
           className="animate-title-sway font-[family-name:var(--font-display)] text-[clamp(2.6rem,10vw,5.2rem)] font-extrabold leading-[0.95] tracking-tight text-[var(--flare)]"
@@ -42,9 +42,9 @@ export function TitleScreen({ onStart }: TitleScreenProps) {
           Justice
         </h1>
         <p className="mt-5 max-w-md text-base leading-relaxed text-[var(--paper)]/85 sm:text-lg">
-          Name your cartoon boss, dress them for maximum corporate irritation,
-          then fight status meetings with rubber chickens, coffee spills, and
-          glitter desk traps — silly, not savage.
+          Build a fully 3D cartoon boss, then slap, kick, snip their hair, and
+          unleash office nightmares — with English or Hindi reaction voice packs.
+          Silly and terrifying. Never realistic gore.
         </p>
 
         <button
@@ -63,13 +63,13 @@ export function TitleScreen({ onStart }: TitleScreenProps) {
             Dodge <span className="text-[var(--tomato)]">HR Suspicion</span>
           </li>
           <li className="rounded-lg border border-white/10 bg-black/20 px-3 py-2">
-            Freeze when they <span className="text-[var(--mint)]">scan</span>
+            Hear them <span className="text-[var(--mint)]">scream</span>
           </li>
         </ul>
       </main>
 
       <footer className="relative z-10 pb-5 text-center text-xs text-white/35">
-        Pure cartoon catharsis. No realistic violence. Staplers remain comedy props.
+        Cartoon catharsis in WebGL. Staplers remain comedy props.
       </footer>
     </div>
   )

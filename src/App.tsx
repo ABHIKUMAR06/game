@@ -7,6 +7,8 @@ import { useGame } from './game/useGame'
 export default function App() {
   const {
     state,
+    voicePack,
+    setVoicePack,
     goTitle,
     openCustomize,
     updateBoss,
@@ -25,7 +27,9 @@ export default function App() {
     return (
       <CustomizeScreen
         boss={state.boss}
+        voicePack={voicePack}
         onChange={updateBoss}
+        onVoicePack={setVoicePack}
         onStart={startGame}
         onBack={goTitle}
       />
@@ -50,6 +54,8 @@ export default function App() {
       pranks={pranks}
       meltdownGoal={meltdownGoal}
       suspicionLimit={suspicionLimit}
+      voicePack={voicePack}
+      onVoicePack={setVoicePack}
       onPrank={deployPrank}
       onCustomize={openCustomize}
     />

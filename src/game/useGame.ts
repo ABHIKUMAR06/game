@@ -8,7 +8,15 @@ import {
   SUSPICION_LIMIT,
 } from './pranks'
 import { DEFAULT_BOSS, sanitizeBossName } from './bossLooks'
-import type { BossLook, FloatingText, GameState, PrankId, Screen } from './types'
+import type {
+  BossLook,
+  FloatingText,
+  GameState,
+  PrankId,
+  Screen,
+  VoicePackId,
+} from './types'
+import { speakReaction, warmVoices } from './voicePacks'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 const initialState = (boss: BossLook = DEFAULT_BOSS): GameState => ({
@@ -20,19 +28,28 @@ const initialState = (boss: BossLook = DEFAULT_BOSS): GameState => ({
   secondsLeft: ROUND_SECONDS,
   scanning: false,
   lastPrankId: null,
+  lastFx: null,
   hitNonce: 0,
-  splash: null,
+  hairIntegrity: 1,
   floating: [],
   cooldowns: {},
-  message: 'Pick a prank. Avoid eye contact when he scans the room.',
+  message:
+    'Slap. Kick. Snip. Keep it cartoon-terrifying — freeze when they scan.',
 })
 
 let floatId = 0
 
 export function useGame() {
   const [state, setState] = useState<GameState>(initialState)
+  const [voicePack, setVoicePack] = useState<VoicePackId>('en-male')
+  const voiceRef = useRef(voicePack)
+  voiceRef.current = voicePack
   const timers = useRef<number[]>([])
   const playing = state.screen === 'playing'
+
+  useEffect(() => {
+    warmVoices()
+  }, [])
 
   const clearTimers = useCallback(() => {
     timers.current.forEach((id) => window.clearTimeout(id))
@@ -43,6 +60,10 @@ export function useGame() {
     const id = window.setTimeout(fn, ms)
     timers.current.push(id)
     return id
+  }, [])
+
+  const say = useCallback((key: string) => {
+    speakReaction(voiceRef.current, key)
   }, [])
 
   const pushFloat = useCallback(
@@ -69,6 +90,7 @@ export function useGame() {
       message: string,
     ) => {
       clearTimers()
+      say(screen === 'won' ? 'win' : 'lose')
       setState((s) => ({
         ...s,
         screen,
@@ -77,7 +99,7 @@ export function useGame() {
         scanning: false,
       }))
     },
-    [clearTimers],
+    [clearTimers, say],
   )
 
   const goTitle = useCallback(() => {
@@ -87,6 +109,7 @@ export function useGame() {
 
   const openCustomize = useCallback(() => {
     clearTimers()
+    warmVoices()
     setState((s) => ({
       ...initialState(s.boss),
       screen: 'customize',
@@ -99,27 +122,24 @@ export function useGame() {
       boss: {
         ...s.boss,
         ...patch,
-        name:
-          patch.name !== undefined
-            ? patch.name.slice(0, 28)
-            : s.boss.name,
+        name: patch.name !== undefined ? patch.name.slice(0, 28) : s.boss.name,
       },
     }))
   }, [])
 
   const startGame = useCallback(() => {
     clearTimers()
+    warmVoices()
     setState((s) => ({
       ...initialState({
         ...s.boss,
         name: sanitizeBossName(s.boss.name),
       }),
       screen: 'playing',
-      message: `${sanitizeBossName(s.boss.name)} is mid–status update. Ruin it.`,
+      message: `${sanitizeBossName(s.boss.name)} looms in 3D. Make them melt.`,
     }))
   }, [clearTimers])
 
-  // Countdown
   useEffect(() => {
     if (!playing) return
     const id = window.setInterval(() => {
@@ -131,7 +151,7 @@ export function useGame() {
             ...s,
             secondsLeft: 0,
             screen: 'lost',
-            message: `Time’s up. ${s.boss.name} finished the TPS report and your alibi evaporated.`,
+            message: `Time’s up. ${s.boss.name} survived the shift. Your legend dies in Slack.`,
             scanning: false,
           }
         }
@@ -141,7 +161,17 @@ export function useGame() {
     return () => window.clearInterval(id)
   }, [playing])
 
-  // Scanning
+  const prevScreen = useRef(state.screen)
+  useEffect(() => {
+    if (prevScreen.current === 'playing' && state.screen === 'lost') {
+      // Timeout lose path (endGame already speaks for meltdown/HR)
+      if (!state.message.includes('supply closet') && !state.message.includes('HR materializes')) {
+        say('lose')
+      }
+    }
+    prevScreen.current = state.screen
+  }, [state.screen, state.message, say])
+
   useEffect(() => {
     if (!playing) return
     const tick = () => {
@@ -150,26 +180,26 @@ export function useGame() {
         return {
           ...s,
           scanning: true,
-          message: `${s.boss.name} is scanning the cubicles. Freeze.`,
+          message: `${s.boss.name} locks eyes. The cubicle goes cold. Freeze.`,
         }
       })
+      say('scan')
       schedule(() => {
         setState((s) => {
           if (s.screen !== 'playing') return s
           return {
             ...s,
             scanning: false,
-            message: `Clear. ${s.boss.name} is arguing with the printer.`,
+            message: `Clear. ${s.boss.name} is wrestling the printer again.`,
           }
         })
       }, SCAN_DURATION_MS)
     }
     const id = window.setInterval(tick, SCAN_INTERVAL_MS)
-    schedule(tick, 3200)
+    schedule(tick, 3000)
     return () => window.clearInterval(id)
-  }, [playing, schedule])
+  }, [playing, schedule, say])
 
-  // Cooldowns
   useEffect(() => {
     if (!playing) return
     const id = window.setInterval(() => {
@@ -206,19 +236,29 @@ export function useGame() {
           ? Math.round(prank.meltdown * 0.55)
           : prank.meltdown
 
-        const meltdown = Math.min(MELTDOWN_GOAL, s.meltdown + meltdownGain)
+        let hairIntegrity = s.hairIntegrity
+        if (prank.hairDamage && !caught) {
+          hairIntegrity = Math.max(0, hairIntegrity - prank.hairDamage)
+        }
+
+        const baldBonus =
+          prank.id === 'haircut' && hairIntegrity <= 0.05 ? 40 : 0
+
+        const meltdown = Math.min(
+          MELTDOWN_GOAL,
+          s.meltdown + meltdownGain + baldBonus,
+        )
         const suspicion = Math.min(SUSPICION_LIMIT, s.suspicion + suspicionGain)
         const points =
           meltdownGain * 10 +
           Math.max(0, 20 - suspicionGain) +
-          (caught ? 0 : 15)
+          (caught ? 0 : 15) +
+          baldBonus * 2
         const score = s.score + points
 
         schedule(() => {
-          setState((cur) =>
-            cur.splash === prank.emoji ? { ...cur, splash: null } : cur,
-          )
-        }, 700)
+          say(caught ? 'caught' : prank.id)
+        }, 40)
 
         if (meltdown >= MELTDOWN_GOAL) {
           const bonus = s.secondsLeft * 8
@@ -226,17 +266,30 @@ export function useGame() {
             endGame(
               'won',
               score + bonus,
-              `${s.boss.name} fled to the supply closet clutching a stress ball shaped like himself. Leftover-clock bonus: +${bonus}.`,
+              `${s.boss.name} fled into the supply closet, hair in ruins, soul stapled. Leftover-clock bonus: +${bonus}.`,
             )
-          }, 420)
+          }, 480)
         } else if (suspicion >= SUSPICION_LIMIT) {
           schedule(() => {
             endGame(
               'lost',
               score,
-              `HR arrived with a pamphlet for ${s.boss.name}: “Workplace Levity Guidelines.” You’re toast.`,
+              `HR materializes beside ${s.boss.name} with a laminated pamphlet and haunted eyes. You’re toast.`,
             )
-          }, 420)
+          }, 480)
+        }
+
+        const firstName = s.boss.name.split(' ')[0] || 'They'
+        let message = caught
+          ? `${s.boss.name} witnessed that ${prank.name.toLowerCase()}! Suspicion spiked.`
+          : prank.reaction.replace(/\bThey\b/g, firstName)
+
+        if (!caught && prank.id === 'haircut') {
+          if (hairIntegrity <= 0.05) {
+            message = `TOTAL DOME. ${firstName} is a polished corporate cue ball.`
+          } else if (hairIntegrity < 0.4) {
+            message = `SNIP. ${firstName}'s coiffure is hanging on by a performance review.`
+          }
         }
 
         return {
@@ -244,17 +297,16 @@ export function useGame() {
           meltdown,
           suspicion,
           score,
+          hairIntegrity,
           lastPrankId: id,
+          lastFx: prank.fx,
           hitNonce: s.hitNonce + 1,
-          splash: prank.emoji,
           cooldowns: { ...s.cooldowns, [id]: prank.cooldownMs },
-          message: caught
-            ? `${s.boss.name} saw that ${prank.name.toLowerCase()}! Suspicion spiked.`
-            : prank.reaction.replace(/\bHe\b/g, s.boss.name.split(' ')[0] || 'He'),
+          message,
         }
       })
     },
-    [endGame, schedule],
+    [endGame, schedule, say],
   )
 
   const prevHit = useRef(0)
@@ -266,6 +318,8 @@ export function useGame() {
     if (!prank) return
     if (state.message.includes('Suspicion spiked')) {
       pushFloat('CAUGHT!', 'bad')
+    } else if (prank.id === 'haircut') {
+      pushFloat('SNIP!', 'warn')
     } else {
       pushFloat(`+${prank.meltdown} meltdown`, 'good')
     }
@@ -279,6 +333,8 @@ export function useGame() {
 
   return {
     state,
+    voicePack,
+    setVoicePack,
     goTitle,
     openCustomize,
     updateBoss,

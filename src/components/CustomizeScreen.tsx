@@ -1,5 +1,5 @@
-import { Boss } from './Boss'
-import type { BossLook } from '../game/types'
+import { OfficeCanvas } from './scene/OfficeCanvas'
+import type { BossLook, VoicePackId } from '../game/types'
 import {
   FACIAL_HAIR,
   GLASSES,
@@ -8,10 +8,13 @@ import {
   SKIN_TONES,
   SUIT_COLORS,
 } from '../game/bossLooks'
+import { VOICE_PACKS } from '../game/voicePacks'
 
 interface CustomizeScreenProps {
   boss: BossLook
+  voicePack: VoicePackId
   onChange: (patch: Partial<BossLook>) => void
+  onVoicePack: (id: VoicePackId) => void
   onStart: () => void
   onBack: () => void
 }
@@ -67,7 +70,9 @@ function ChipRow<T extends string>({
 
 export function CustomizeScreen({
   boss,
+  voicePack,
   onChange,
+  onVoicePack,
   onStart,
   onBack,
 }: CustomizeScreenProps) {
@@ -84,21 +89,35 @@ export function CustomizeScreen({
         }}
       />
 
-      <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 px-4 py-6 sm:px-6 lg:flex-row lg:items-start lg:gap-10 lg:py-10">
-        <section className="flex flex-col items-center lg:sticky lg:top-8 lg:w-[42%]">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--fluorescent)]">
-            Build your villain
+      <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col gap-5 px-4 py-5 sm:px-6 lg:flex-row lg:items-stretch lg:gap-8 lg:py-8">
+        <section className="flex min-h-[320px] flex-col lg:w-[46%]">
+          <p className="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--fluorescent)]">
+            Build your villain · 3D
           </p>
-          <h2 className="mb-4 text-center font-[family-name:var(--font-display)] text-3xl font-extrabold text-[var(--flare)] sm:text-4xl">
+          <h2 className="mb-3 font-[family-name:var(--font-display)] text-3xl font-extrabold text-[var(--flare)] sm:text-4xl">
             Dress the boss
           </h2>
-          <Boss look={boss} scanning={false} shaking={false} splash={null} />
-          <p className="mt-3 max-w-xs text-center text-sm text-white/55">
-            Live preview. Make him look like the one who invented Monday standups.
+          <div className="relative min-h-[280px] flex-1 overflow-hidden rounded-2xl border border-white/10 bg-black/40 shadow-[0_20px_60px_rgba(0,0,0,0.45)]">
+            <OfficeCanvas
+              look={boss}
+              scanning={false}
+              hitNonce={0}
+              lastFx={null}
+              hairIntegrity={1}
+              meltdown={0}
+              interactive
+              className="absolute inset-0"
+            />
+          </div>
+          <p className="mt-2 text-center text-sm font-bold text-[var(--flare)]">
+            {boss.name}
+          </p>
+          <p className="text-center text-xs text-white/45">
+            Drag to orbit. Live 3D preview with lights and shadows.
           </p>
         </section>
 
-        <section className="flex flex-1 flex-col gap-5 rounded-2xl border border-white/10 bg-black/30 p-4 backdrop-blur-sm sm:p-6">
+        <section className="flex flex-1 flex-col gap-4 rounded-2xl border border-white/10 bg-black/30 p-4 backdrop-blur-sm sm:p-5">
           <label className="block">
             <span className="mb-2 block text-xs font-semibold uppercase tracking-[0.18em] text-white/50">
               Boss name
@@ -113,6 +132,32 @@ export function CustomizeScreen({
               autoComplete="off"
             />
           </label>
+
+          <fieldset>
+            <legend className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-white/50">
+              Reaction voice pack
+            </legend>
+            <div className="flex flex-wrap gap-2">
+              {VOICE_PACKS.map((v) => (
+                <button
+                  key={v.id}
+                  type="button"
+                  onClick={() => onVoicePack(v.id)}
+                  className={[
+                    'rounded-lg border px-3 py-2 text-sm font-semibold transition',
+                    voicePack === v.id
+                      ? 'border-[var(--fluorescent)] bg-[var(--fluorescent)]/15 text-[var(--fluorescent)]'
+                      : 'border-white/15 bg-black/25 text-white/80 hover:border-white/35',
+                  ].join(' ')}
+                >
+                  {v.label}
+                </button>
+              ))}
+            </div>
+            <p className="mt-2 text-xs text-white/40">
+              Uses your browser’s speech voices (English / Hindi when installed).
+            </p>
+          </fieldset>
 
           <ChipRow
             label="Skin tone"
@@ -154,7 +199,7 @@ export function CustomizeScreen({
             onPick={(glasses) => onChange({ glasses })}
           />
 
-          <div className="mt-2 flex flex-col gap-3 sm:flex-row">
+          <div className="mt-1 flex flex-col gap-3 sm:flex-row">
             <button
               type="button"
               onClick={onStart}

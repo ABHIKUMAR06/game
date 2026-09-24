@@ -1,6 +1,8 @@
 # Cubicle Justice
 
-A satirical office comedy web game. Design a cartoon boss (name, skin tone, hair, suit, glasses), then push them to meltdown with rubber chickens, coffee spills, whoopee cushions, and desk traps — silly cartoon pranks, not graphic violence.
+3D satirical office comedy web game. Design a cartoon boss, then slap, kick, snip their hair, and deploy cubicle nightmares until they melt down — with English or Hindi reaction voice packs.
+
+Silly cartoon slapstick. Not graphic violence.
 
 ## Play locally
 
@@ -9,15 +11,17 @@ npm install
 npm run dev
 ```
 
-Opens on **http://127.0.0.1:4731** (Vite is bound to port `4731`).
+Opens on **http://127.0.0.1:4731**.
 
 ## How to play
 
-1. **Title** → design your boss (name + looks).
-2. Deploy pranks to fill **Meltdown** before **HR Suspicion** hits 100 or the clock runs out.
-3. When the boss **scans**, freeze — pranking then spikes suspicion.
-4. Win = meltdown; lose = HR or timeout. Score includes leftover-time bonus on wins.
+1. Design your boss in the live **3D** customizer (name, skin, hair, suit, glasses).
+2. Pick a **voice pack**: English men/women, Hindi men/women, or mute.
+3. Use the chaos toolkit (slap, kick, haircut, chicken, coffee, pie, stapler slam, void memo).
+4. Fill **Meltdown** before **HR Suspicion** hits 100 or the clock runs out.
+5. Freeze when they **scan** — getting caught spikes suspicion.
+6. Guerrilla haircuts permanently shrink their 3D coiffure.
 
 ## Stack
 
-Vite + React + TypeScript + Tailwind CSS. No auth or database.
+Vite + React + TypeScript + Tailwind + Three.js (`@react-three/fiber`, `@react-three/drei`). Voices use the browser Speech Synthesis API (quality depends on voices installed on the device).
