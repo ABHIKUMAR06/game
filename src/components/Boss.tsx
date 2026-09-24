@@ -146,10 +146,11 @@ export function Boss({ look, scanning, shaking, splash }: BossProps) {
                 ? 'M86 118 Q100 112 114 118'
                 : 'M86 116 Q100 128 114 116'
             }
-            stroke="#8f4a3a"
-            strokeWidth="3"
+            stroke={shade}
+            strokeWidth="3.5"
             fill="none"
             strokeLinecap="round"
+            opacity="0.85"
           />
 
           {/* glasses */}
