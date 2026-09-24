@@ -1,4 +1,4 @@
-export type Screen = 'title' | 'customize' | 'playing' | 'won' | 'lost'
+export type Screen = 'title' | 'customize' | 'playing'
 
 export type VoicePackId =
   | 'off'
@@ -44,17 +44,35 @@ export interface BossLook {
   glasses: Glasses
 }
 
+/** Lasting visual damage that accumulates during an unlimited session. */
+export interface DamageMarks {
+  /** Cheek/face slap bruises (0–6). */
+  slapMarks: number
+  /** Shin/torso kick welts (0–5). */
+  kickMarks: number
+  /** Coffee brown stains on suit + face (0–6). */
+  coffeeStains: number
+  /** Cream pie residue layers (0–4). */
+  pieSplat: number
+  /** Feather/ding marks from chicken (0–4). */
+  chickenHits: number
+  /** Forehead stapler dents (0–4). */
+  staplerBumps: number
+  /** Purple void crack intensity (0–3). */
+  voidCrack: number
+  /** 1 = full hair, 0 = cue-ball. */
+  hairIntegrity: number
+}
+
 export interface Prank {
   id: PrankId
   name: string
   blurb: string
   emoji: string
   meltdown: number
-  suspicion: number
   cooldownMs: number
   reaction: string
   fx: HitFx
-  /** How much cartoon hair integrity this removes (0–1). */
   hairDamage?: number
 }
 
@@ -68,16 +86,25 @@ export interface GameState {
   screen: Screen
   boss: BossLook
   meltdown: number
-  suspicion: number
   score: number
-  secondsLeft: number
-  scanning: boolean
   lastPrankId: PrankId | null
   lastFx: HitFx | null
   hitNonce: number
-  /** 1 = full coiffure, 0 = cartoon bald patch. */
-  hairIntegrity: number
+  damage: DamageMarks
   floating: FloatingText[]
   cooldowns: Partial<Record<PrankId, number>>
   message: string
+  /** Soft meltdown celebration flag — play continues. */
+  justMelted: boolean
 }
+
+export const EMPTY_DAMAGE = (): DamageMarks => ({
+  slapMarks: 0,
+  kickMarks: 0,
+  coffeeStains: 0,
+  pieSplat: 0,
+  chickenHits: 0,
+  staplerBumps: 0,
+  voidCrack: 0,
+  hairIntegrity: 1,
+})

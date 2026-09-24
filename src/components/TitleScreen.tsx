@@ -15,23 +15,11 @@ export function TitleScreen({ onStart }: TitleScreenProps) {
           `,
         }}
       />
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.12]"
-        style={{
-          backgroundImage: `repeating-linear-gradient(
-            90deg,
-            transparent,
-            transparent 47px,
-            rgba(125, 211, 167, 0.35) 47px,
-            rgba(125, 211, 167, 0.35) 48px
-          )`,
-        }}
-      />
       <div className="animate-flicker pointer-events-none absolute left-1/2 top-0 h-24 w-[70%] -translate-x-1/2 rounded-b-full bg-[radial-gradient(ellipse_at_top,rgba(240,199,94,0.35),transparent_70%)]" />
 
       <main className="relative z-10 flex flex-1 flex-col items-center justify-center px-5 py-10 text-center">
         <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-[var(--fluorescent)]">
-          3D after-hours cubicle horror-comedy
+          Unlimited 3D cubicle catharsis
         </p>
         <h1
           className="animate-title-sway font-[family-name:var(--font-display)] text-[clamp(2.6rem,10vw,5.2rem)] font-extrabold leading-[0.95] tracking-tight text-[var(--flare)]"
@@ -42,9 +30,8 @@ export function TitleScreen({ onStart }: TitleScreenProps) {
           Justice
         </h1>
         <p className="mt-5 max-w-md text-base leading-relaxed text-[var(--paper)]/85 sm:text-lg">
-          Build a fully 3D cartoon boss, then slap, kick, snip their hair, and
-          unleash office nightmares — with English or Hindi reaction voice packs.
-          Silly and terrifying. Never realistic gore.
+          Slap, kick, snip hair, spill coffee — every hit leaves a lasting mark.
+          No HR. No clock. English and Hindi voice packs that actually punch.
         </p>
 
         <button
@@ -57,19 +44,19 @@ export function TitleScreen({ onStart }: TitleScreenProps) {
 
         <ul className="mt-10 grid max-w-lg gap-2 text-left text-sm text-[var(--paper)]/70 sm:grid-cols-3">
           <li className="rounded-lg border border-white/10 bg-black/20 px-3 py-2">
-            Fill <span className="text-[var(--flare)]">Meltdown</span>
+            Permanent <span className="text-[var(--flare)]">bruises & stains</span>
           </li>
           <li className="rounded-lg border border-white/10 bg-black/20 px-3 py-2">
-            Dodge <span className="text-[var(--tomato)]">HR Suspicion</span>
+            Juicy <span className="text-[var(--tomato)]">hit FX + SFX</span>
           </li>
           <li className="rounded-lg border border-white/10 bg-black/20 px-3 py-2">
-            Hear them <span className="text-[var(--mint)]">scream</span>
+            Voices EN / HI <span className="text-[var(--mint)]">M·W</span>
           </li>
         </ul>
       </main>
 
       <footer className="relative z-10 pb-5 text-center text-xs text-white/35">
-        Cartoon catharsis in WebGL. Staplers remain comedy props.
+        Cartoon-real damage. No realistic gore. Torture forever.
       </footer>
     </div>
   )

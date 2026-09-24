@@ -8,7 +8,7 @@ import {
   SKIN_TONES,
   SUIT_COLORS,
 } from '../game/bossLooks'
-import { VOICE_PACKS } from '../game/voicePacks'
+import { VOICE_PACKS, previewVoice } from '../game/voicePacks'
 
 interface CustomizeScreenProps {
   boss: BossLook
@@ -97,13 +97,11 @@ export function CustomizeScreen({
           <h2 className="mb-3 font-[family-name:var(--font-display)] text-3xl font-extrabold text-[var(--flare)] sm:text-4xl">
             Dress the boss
           </h2>
-          <div className="relative min-h-[280px] flex-1 overflow-hidden rounded-2xl border border-white/10 bg-black/40 shadow-[0_20px_60px_rgba(0,0,0,0.45)]">
+            <div className="relative min-h-[280px] flex-1 overflow-hidden rounded-2xl border border-white/10 bg-black/40 shadow-[0_20px_60px_rgba(0,0,0,0.45)]">
             <OfficeCanvas
               look={boss}
-              scanning={false}
               hitNonce={0}
               lastFx={null}
-              hairIntegrity={1}
               meltdown={0}
               interactive
               className="absolute inset-0"
@@ -142,7 +140,10 @@ export function CustomizeScreen({
                 <button
                   key={v.id}
                   type="button"
-                  onClick={() => onVoicePack(v.id)}
+                  onClick={() => {
+                    onVoicePack(v.id)
+                    previewVoice(v.id)
+                  }}
                   className={[
                     'rounded-lg border px-3 py-2 text-sm font-semibold transition',
                     voicePack === v.id
@@ -155,7 +156,7 @@ export function CustomizeScreen({
               ))}
             </div>
             <p className="mt-2 text-xs text-white/40">
-              Uses your browser’s speech voices (English / Hindi when installed).
+              Tap a pack to preview. Picks the best natural English/Hindi voice your browser has.
             </p>
           </fieldset>
 

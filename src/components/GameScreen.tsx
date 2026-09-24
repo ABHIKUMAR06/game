@@ -6,13 +6,12 @@ import type {
   PrankId,
   VoicePackId,
 } from '../game/types'
-import { VOICE_PACKS } from '../game/voicePacks'
+import { VOICE_PACKS, previewVoice } from '../game/voicePacks'
 
 interface GameScreenProps {
   state: GameState
   pranks: Prank[]
   meltdownGoal: number
-  suspicionLimit: number
   voicePack: VoicePackId
   onVoicePack: (id: VoicePackId) => void
   onPrank: (id: PrankId) => void
@@ -73,48 +72,45 @@ export function GameScreen({
   state,
   pranks,
   meltdownGoal,
-  suspicionLimit,
   voicePack,
   onVoicePack,
   onPrank,
   onCustomize,
 }: GameScreenProps) {
+  const d = state.damage
   return (
     <div className="relative flex h-full min-h-[100dvh] flex-col overflow-hidden bg-[var(--night)]">
-      <header className="relative z-20 flex items-start gap-2 px-2 pt-2 sm:gap-3 sm:px-4 sm:pt-3">
+      <header className="relative z-20 flex items-center gap-3 px-2 pt-2 sm:px-4 sm:pt-3">
         <Meter
-          label="Meltdown"
+          label="Meltdown (loops)"
           value={state.meltdown}
           max={meltdownGoal}
           color="var(--flare)"
         />
-        <Meter
-          label="HR Suspicion"
-          value={state.suspicion}
-          max={suspicionLimit}
-          color="var(--tomato)"
-        />
-        <div className="shrink-0 rounded-xl border border-white/10 bg-black/50 px-2.5 py-1.5 text-center backdrop-blur-sm sm:px-3 sm:py-2">
-          <p className="text-[10px] uppercase tracking-wider text-white/45">Clock</p>
-          <p className="font-[family-name:var(--font-display)] text-lg font-bold text-[var(--fluorescent)] sm:text-xl">
-            {state.secondsLeft}s
+        <div className="shrink-0 rounded-xl border border-white/10 bg-black/50 px-3 py-2 text-center backdrop-blur-sm">
+          <p className="text-[10px] uppercase tracking-wider text-white/45">Score</p>
+          <p className="font-[family-name:var(--font-display)] text-xl font-bold text-[var(--flare)]">
+            {state.score}
           </p>
         </div>
       </header>
 
       <div className="relative z-20 flex flex-wrap items-center justify-between gap-2 px-2 pt-2 sm:px-4">
-        <p className="text-sm font-semibold text-white/70">
-          Score <span className="text-[var(--flare)]">{state.score}</span>
-          <span className="ml-3 text-white/40">
-            Hair {Math.round(state.hairIntegrity * 100)}%
-          </span>
+        <p className="text-[11px] text-white/55 sm:text-xs">
+          Marks · slap {d.slapMarks} · coffee {d.coffeeStains} · hair{' '}
+          {Math.round(d.hairIntegrity * 100)}% · pie {d.pieSplat}
+          <span className="ml-2 text-[var(--mint)]">Unlimited · no HR</span>
         </p>
         <div className="flex items-center gap-2">
           <label className="flex items-center gap-1.5 text-[11px] text-white/55">
             Voice
             <select
               value={voicePack}
-              onChange={(e) => onVoicePack(e.target.value as VoicePackId)}
+              onChange={(e) => {
+                const id = e.target.value as VoicePackId
+                onVoicePack(id)
+                previewVoice(id)
+              }}
               className="rounded-md border border-white/15 bg-black/50 px-2 py-1 text-xs font-semibold text-[var(--paper)]"
             >
               {VOICE_PACKS.map((v) => (
@@ -136,12 +132,18 @@ export function GameScreen({
 
       <div className="relative z-10 min-h-0 flex-1">
         <Floats items={state.floating} />
+        {state.justMelted && (
+          <div className="animate-bounce-in pointer-events-none absolute inset-x-0 top-8 z-40 text-center">
+            <p className="inline-block rounded-xl bg-[var(--flare)] px-4 py-2 font-[family-name:var(--font-display)] text-lg font-extrabold text-[var(--ink)] shadow-lg">
+              Meltdown! Marks stay — keep going
+            </p>
+          </div>
+        )}
         <OfficeCanvas
           look={state.boss}
-          scanning={state.scanning}
           hitNonce={state.hitNonce}
           lastFx={state.lastFx}
-          hairIntegrity={state.hairIntegrity}
+          damage={state.damage}
           meltdown={state.meltdown}
           interactive
           className="h-full min-h-[280px]"
@@ -157,7 +159,7 @@ export function GameScreen({
 
       <nav className="relative z-20 border-t border-white/10 bg-black/60 px-2 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2 backdrop-blur-md sm:px-4">
         <p className="mb-2 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white/40">
-          3D chaos toolkit · {state.boss.name}
+          Leave lasting damage · {state.boss.name}
         </p>
         <div className="mx-auto grid max-w-3xl grid-cols-4 gap-2 sm:grid-cols-8">
           {pranks.map((p) => {
