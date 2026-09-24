@@ -18,7 +18,13 @@ export default function App() {
   } = useGame()
 
   if (state.screen === 'title') {
-    return <TitleScreen onStart={openCustomize} />
+    return (
+      <TitleScreen
+        onStart={openCustomize}
+        voicePack={voicePack}
+        onVoicePack={setVoicePack}
+      />
+    )
   }
 
   if (state.screen === 'customize') {

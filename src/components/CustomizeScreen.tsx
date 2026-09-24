@@ -1,3 +1,4 @@
+import { VoicePreviewPanel } from './VoicePreviewPanel'
 import { OfficeCanvas } from './scene/OfficeCanvas'
 import type { BossLook, VoicePackId } from '../game/types'
 import {
@@ -8,7 +9,6 @@ import {
   SKIN_TONES,
   SUIT_COLORS,
 } from '../game/bossLooks'
-import { VOICE_PACKS, previewVoice } from '../game/voicePacks'
 
 interface CustomizeScreenProps {
   boss: BossLook
@@ -131,34 +131,10 @@ export function CustomizeScreen({
             />
           </label>
 
-          <fieldset>
-            <legend className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-white/50">
-              Reaction voice pack
-            </legend>
-            <div className="flex flex-wrap gap-2">
-              {VOICE_PACKS.map((v) => (
-                <button
-                  key={v.id}
-                  type="button"
-                  onClick={() => {
-                    onVoicePack(v.id)
-                    previewVoice(v.id)
-                  }}
-                  className={[
-                    'rounded-lg border px-3 py-2 text-sm font-semibold transition',
-                    voicePack === v.id
-                      ? 'border-[var(--fluorescent)] bg-[var(--fluorescent)]/15 text-[var(--fluorescent)]'
-                      : 'border-white/15 bg-black/25 text-white/80 hover:border-white/35',
-                  ].join(' ')}
-                >
-                  {v.label}
-                </button>
-              ))}
-            </div>
-            <p className="mt-2 text-xs text-white/40">
-              Tap a pack to preview. Picks the best natural English/Hindi voice your browser has.
-            </p>
-          </fieldset>
+          <VoicePreviewPanel
+            voicePack={voicePack}
+            onVoicePack={onVoicePack}
+          />
 
           <ChipRow
             label="Skin tone"
