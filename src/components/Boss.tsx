@@ -64,14 +64,16 @@ export function Boss({ look, scanning, shaking, splash }: BossProps) {
           {/* hair */}
           {look.hairStyle === 'slick' && (
             <path
-              d="M60 70 Q100 28 140 70 Q120 48 100 50 Q80 48 60 70"
+              d="M58 72 Q100 22 142 72 L138 78 Q100 42 62 78 Z"
               fill={hair}
+              stroke={hair}
+              strokeWidth="1"
             />
           )}
           {look.hairStyle === 'tuft' && (
             <>
               <path d="M68 72 Q100 40 132 72 Q118 58 100 60 Q82 58 68 72" fill={hair} />
-              <path d="M95 42 Q100 22 108 40" fill={hair} />
+              <path d="M94 48 Q100 18 110 46 L104 52 Q100 32 96 52 Z" fill={hair} />
             </>
           )}
           {look.hairStyle === 'balding' && (
@@ -83,7 +85,7 @@ export function Boss({ look, scanning, shaking, splash }: BossProps) {
           )}
           {look.hairStyle === 'mullet' && (
             <>
-              <path d="M62 68 Q100 32 138 68 Q125 52 100 54 Q75 52 62 68" fill={hair} />
+              <path d="M62 68 Q100 28 138 68 Q125 48 100 50 Q75 48 62 68" fill={hair} />
               <path d="M55 95 Q48 130 70 140 Q80 110 62 90" fill={hair} />
               <path d="M145 95 Q152 130 130 140 Q120 110 138 90" fill={hair} />
             </>
